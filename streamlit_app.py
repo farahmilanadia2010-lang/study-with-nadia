@@ -11,7 +11,7 @@ st.markdown("""
     .stApp {
         background-color: #FFF0F5;
     }
-    h1, h2, h3, p {
+    h1, h2, h3, p, label, .stMarkdown {
         color: #DB7093 !important;
         font-family: 'Courier New', Courier, monospace;
     }
@@ -29,12 +29,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FUNGSI ALARM JAVASCRIPT ---
+# --- FUNGSI ALARM LONCENG JAVASCRIPT ---
 def play_bell():
-    # Menggunakan Audio API JavaScript yang lebih andal untuk memicu suara
+    # Menggunakan audio alarm dari Wikimedia Commons yang terpercaya
     js_bell = """
     <script>
-    var audio = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
+    var audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/5/5c/Analog-watch-alarm_rolling.ogg');
     audio.play();
     </script>
     """
@@ -61,52 +61,53 @@ quotes = [
 # --- SIDEBAR: PENGATURAN FITUR ---
 st.sidebar.header("⚙️ Pengaturan Fitur")
 
-# 1. Kustomisasi Waktu
+# 1. Kustomisasi Waktu Sendiri
 st.sidebar.subheader("⏳ Durasi Waktu (Menit)")
 durasi_belajar = st.sidebar.number_input("Waktu Belajar:", min_value=1, max_value=120, value=25)
 durasi_istirahat = st.sidebar.number_input("Waktu Istirahat:", min_value=1, max_value=60, value=5)
 
-# 2. 10 Pilihan Backsound
+# 2. 10 Pilihan Musik Latar yang Stabil (Wikimedia & Archive)
 st.sidebar.subheader("🎵 Pemutar Musik Pendukung")
 pilihan_musik = st.sidebar.selectbox(
     "Pilih Suara Latar:", 
     [
         "Tanpa Musik", 
-        "1. Lo-Fi Calm Beats", 
-        "2. Cozy Cafe Jazz", 
-        "3. Studio Ghibli Piano Vibe", 
-        "4. Rain & Thunder (Hujan)", 
-        "5. Forest Birds (Suara Hutan)", 
+        "1. Cozy Cafe Jazz Piano", 
+        "2. Classical Focus Study", 
+        "3. Relaxing Nature Ambient", 
+        "4. Soft Rain Sound (Hujan)", 
+        "5. Forest Birds (Suara Burung)", 
         "6. Ocean Waves (Ombak Laut)", 
-        "7. White Noise (Fokus Maksimal)", 
-        "8. Alpha Waves (Otak Cerdas)", 
-        "9. Aesthetic Ambient Pop", 
-        "10. Campfire Crackle (Api Unggun)"
+        "7. Deep Meditation Alpha", 
+        "8. Lofi Instrumental Vibe", 
+        "9. Peaceful Temple Ambient", 
+        "10. Cinematic Chill Track"
     ]
 )
 
+# Daftar link audio alternatif publik yang stabil
 audio_urls = {
-    "1. Lo-Fi Calm Beats": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    "2. Cozy Cafe Jazz": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    "3. Studio Ghibli Piano Vibe": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    "4. Rain & Thunder (Hujan)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-    "5. Forest Birds (Suara Hutan)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-    "6. Ocean Waves (Ombak Laut)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-    "7. White Noise (Fokus Maksimal)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
-    "8. Alpha Waves (Otak Cerdas)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-    "9. Aesthetic Ambient Pop": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
-    "10. Campfire Crackle (Api Unggun)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"
+    "1. Cozy Cafe Jazz Piano": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Jesper_Ankarfeldt_-_04_-_Coffee_Shop.mp3",
+    "2. Classical Focus Study": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Frederic_Chopin_-_Nocturne_Op_9_No_2_E_flat_Major.mp3",
+    "3. Relaxing Nature Ambient": "https://upload.wikimedia.org/wikipedia/commons/8/87/Ambient_nature_soundscape.ogg",
+    "4. Soft Rain Sound (Hujan)": "https://upload.wikimedia.org/wikipedia/commons/0/05/Rain_on_roof_1.ogg",
+    "5. Forest Birds (Suara Burung)": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Forest_birds_singing.ogg",
+    "6. Ocean Waves (Ombak Laut)": "https://upload.wikimedia.org/wikipedia/commons/1/18/Ocean_waves_at_the_beach.ogg",
+    "7. Deep Meditation Alpha": "https://upload.wikimedia.org/wikipedia/commons/0/08/Binaural_Alpha_Waves_8Hz.ogg",
+    "8. Lofi Instrumental Vibe": "https://archive.org/download/lofi-hiphop-tracks/ChillBeat.mp3",
+    "9. Peaceful Temple Ambient": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Meditation_Bell_Sound.ogg",
+    "10. Cinematic Chill Track": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Epic_Cinematic_Ambient.mp3"
 }
 
-# Menampilkan widget audio resmi di sidebar agar pengguna bisa menekan tombol play
 if pilihan_musik != "Tanpa Musik":
-    st.sidebar.audio(audio_urls[pilihan_musik], format="audio/mp3")
-    st.sidebar.caption("💡 *Klik tombol play di atas untuk menyalakan musik latar.*")
+    # Ditampilkan dengan element audio html bawaan agar loading bar berjalan mulus
+    st.sidebar.audio(audio_urls[pilihan_musik])
+    st.sidebar.caption("💡 *Klik tombol play di atas untuk memutar musik latar.*")
 
 # --- MAIN INTERFACE (TABS) ---
 tab1, tab2 = st.tabs(["📝 Tugas Hari Ini", "⏱️ Timer Pomodoro"])
 
-# Fitur To-Do List
+# 3. Fitur To-Do List
 with tab1:
     st.subheader("📌 To-Do List")
     with st.form(key='todo_form', clear_on_submit=True):
@@ -122,7 +123,7 @@ with tab1:
     else:
         st.write("Belum ada tugas. Yuk tulis target belajarmu!")
 
-# Fitur Timer Pomodoro
+# 4. Fitur Timer Pomodoro
 with tab2:
     st.subheader("⏱️ Sesi Pomodoro")
     st.metric(label="🌸 Sesi Fokus Berhasil Hari Ini", value=st.session_state.pomodoro_counter)
@@ -147,7 +148,7 @@ with tab2:
             total_detik -= 1
             
         tempat_timer.header("🎉 Waktu Habis!")
-        play_bell()  # Memanggil alarm JavaScript cerdas
+        play_bell()  # Memanggil alarm lonceng otomatis saat durasi nol
         
         if "Belajar" in mode:
             st.session_state.pomodoro_counter += 1
