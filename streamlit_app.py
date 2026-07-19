@@ -29,14 +29,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- FUNGSI AUDIO (Lonceng Otomatis) ---
+# --- FUNGSI ALARM JAVASCRIPT ---
 def play_bell():
-    bell_html = """
-        <audio autoplay>
-            <source src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" type="audio/ogg">
-        </audio>
+    # Menggunakan Audio API JavaScript yang lebih andal untuk memicu suara
+    js_bell = """
+    <script>
+    var audio = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
+    audio.play();
+    </script>
     """
-    st.markdown(bell_html, unsafe_allow_html=True)
+    st.components.v1.html(js_bell, height=0, width=0)
 
 # --- INISIALISASI SESSION STATE ---
 if 'todo_list' not in st.session_state:
@@ -59,13 +61,13 @@ quotes = [
 # --- SIDEBAR: PENGATURAN FITUR ---
 st.sidebar.header("⚙️ Pengaturan Fitur")
 
-# 1 & 2. Kustomisasi Waktu Belajar & Istirahat sendiri
+# 1. Kustomisasi Waktu
 st.sidebar.subheader("⏳ Durasi Waktu (Menit)")
 durasi_belajar = st.sidebar.number_input("Waktu Belajar:", min_value=1, max_value=120, value=25)
 durasi_istirahat = st.sidebar.number_input("Waktu Istirahat:", min_value=1, max_value=60, value=5)
 
-# 3. 10 Pilihan Backsound Musik & Suara Alam
-st.sidebar.subheader("🎵 Musik Pendukung (10 Pilihan)")
+# 2. 10 Pilihan Backsound
+st.sidebar.subheader("🎵 Pemutar Musik Pendukung")
 pilihan_musik = st.sidebar.selectbox(
     "Pilih Suara Latar:", 
     [
@@ -83,7 +85,6 @@ pilihan_musik = st.sidebar.selectbox(
     ]
 )
 
-# Link audio publik bebas hak cipta untuk variasi suara
 audio_urls = {
     "1. Lo-Fi Calm Beats": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     "2. Cozy Cafe Jazz": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
@@ -97,13 +98,15 @@ audio_urls = {
     "10. Campfire Crackle (Api Unggun)": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3"
 }
 
+# Menampilkan widget audio resmi di sidebar agar pengguna bisa menekan tombol play
 if pilihan_musik != "Tanpa Musik":
-    st.audio(audio_urls[pilihan_musik])
+    st.sidebar.audio(audio_urls[pilihan_musik], format="audio/mp3")
+    st.sidebar.caption("💡 *Klik tombol play di atas untuk menyalakan musik latar.*")
 
 # --- MAIN INTERFACE (TABS) ---
 tab1, tab2 = st.tabs(["📝 Tugas Hari Ini", "⏱️ Timer Pomodoro"])
 
-# 4. Fitur To Do List
+# Fitur To-Do List
 with tab1:
     st.subheader("📌 To-Do List")
     with st.form(key='todo_form', clear_on_submit=True):
@@ -119,7 +122,7 @@ with tab1:
     else:
         st.write("Belum ada tugas. Yuk tulis target belajarmu!")
 
-# 5. Timer Interface
+# Fitur Timer Pomodoro
 with tab2:
     st.subheader("⏱️ Sesi Pomodoro")
     st.metric(label="🌸 Sesi Fokus Berhasil Hari Ini", value=st.session_state.pomodoro_counter)
@@ -144,7 +147,7 @@ with tab2:
             total_detik -= 1
             
         tempat_timer.header("🎉 Waktu Habis!")
-        play_bell()  # Fitur Bunyi Lonceng Otomatis
+        play_bell()  # Memanggil alarm JavaScript cerdas
         
         if "Belajar" in mode:
             st.session_state.pomodoro_counter += 1
@@ -152,4 +155,3 @@ with tab2:
             st.rerun()
         else:
             st.success("Istirahat selesai! Yuk, kembali fokus belajar! 📚")
-       
