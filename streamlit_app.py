@@ -50,12 +50,10 @@ if 'todo_list' not in st.session_state:
     st.session_state.todo_list = []
 if 'pomodoro_counter' not in st.session_state:
     st.session_state.pomodoro_counter = 0
-if 'timer_running' not in st.session_state:
-    st.session_state.timer_running = False
 
 # --- JUDUL UTAMA ---
 st.title("🌸 Pink Pomodoro Timer 🌸")
-st.write("Kelola waktu belajarmu dengan iringan musik Lofi Estetik!")
+st.write("Kelola waktu belajarmu dengan musik pengiring!")
 
 quotes = [
     "Semangat belajarnya, Nadia! Langkah kecil hari ini adalah kesuksesan masa depan. ✨",
@@ -70,7 +68,7 @@ durasi_belajar = st.sidebar.number_input("Waktu Belajar (Menit):", min_value=1, 
 durasi_istirahat = st.sidebar.number_input("Waktu Istirahat (Menit):", min_value=1, max_value=60, value=5)
 
 # --- TABS UTAMA ---
-tab1, tab2, tab3 = st.tabs(["⏱️ Timer Pomodoro", "🎵 Musik Fokus", "📝 Tugas Hari Ini"])
+tab1, tab2, tab3 = st.tabs(["⏱️ Timer Pomodoro", "🎵 Musik Pengiring", "📝 Tugas Hari Ini"])
 
 # ===== TAB 1: TIMER DENGAN LONCENG OTOMATIS =====
 with tab1:
@@ -83,106 +81,104 @@ with tab1:
     tombol_start = st.button("Mulai Timer ▶️")
     
     if tombol_start:
-        st.session_state.timer_running = True
         st.info(random.choice(quotes))
         tempat_timer = st.empty()
         progress_bar = st.progress(0)
         total_detik = menit_target * 60
         
-        # Timer countdown
-        while total_detik > 0 and st.session_state.timer_running:
+        while total_detik > 0:
             menit = total_detik // 60
             detik = total_detik % 60
             tempat_timer.header(f"⏳ {menit:02d}:{detik:02d}")
             progress_bar.progress(1 - (total_detik / (menit_target * 60)))
             time.sleep(1)
             total_detik -= 1
+            
+        tempat_timer.header("🎉 Waktu Habis!")
+        progress_bar.empty()
         
-        if total_detik == 0:
-            tempat_timer.header("🎉 Waktu Habis!")
-            progress_bar.empty()
-            
-            # ===== LONCENG OTOMATIS (JavaScript) =====
-            bell_js = """
-            <script>
-            (function() {
-                try {
-                    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        # ===== LONCENG OTOMATIS (LANGSUNG BUNYI, GA PERLU KLIK) =====
+        bell_js = """
+        <script>
+        (function() {
+            try {
+                var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                function playBell() {
+                    var frequencies = [523.25, 659.25, 783.99, 1046.50];
+                    var duration = 0.3;
                     
-                    function playBell() {
-                        var frequencies = [523.25, 659.25, 783.99, 1046.50];
-                        var duration = 0.3;
-                        
-                        frequencies.forEach(function(freq, index) {
-                            setTimeout(function() {
-                                var oscillator = audioCtx.createOscillator();
-                                var gainNode = audioCtx.createGain();
-                                oscillator.connect(gainNode);
-                                gainNode.connect(audioCtx.destination);
-                                oscillator.frequency.value = freq;
-                                oscillator.type = 'sine';
-                                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-                                oscillator.start(audioCtx.currentTime);
-                                oscillator.stop(audioCtx.currentTime + duration);
-                            }, index * 200);
-                        });
-                    }
-                    
-                    // Bunyiin 3 kali otomatis
-                    playBell();
-                    setTimeout(playBell, 1000);
-                    setTimeout(playBell, 2000);
-                    
-                    // Tampilkan notifikasi di console
-                    console.log('🔔 Lonceng berbunyi!');
-                } catch(e) {
-                    console.log('Audio error:', e);
+                    frequencies.forEach(function(freq, index) {
+                        setTimeout(function() {
+                            var oscillator = audioCtx.createOscillator();
+                            var gainNode = audioCtx.createGain();
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioCtx.destination);
+                            oscillator.frequency.value = freq;
+                            oscillator.type = 'sine';
+                            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                            oscillator.start(audioCtx.currentTime);
+                            oscillator.stop(audioCtx.currentTime + duration);
+                        }, index * 200);
+                    });
                 }
-            })();
-            </script>
-            """
-            
-            # Inject JS otomatis
-            st.components.v1.html(bell_js, height=0)
-            
-            # Tampilkan pesan
-            st.success("🔔 Lonceng berbunyi! Waktu telah selesai.")
-            
-            # Opsi audio alternatif (backup)
-            st.caption("Jika tidak terdengar, klik play di bawah ini:")
-            st.audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3", format="audio/mp3")
-            
-            if "Belajar" in mode:
-                st.session_state.pomodoro_counter += 1
-                st.balloons()
-                st.success("Hebat banget! Satu sesi belajar selesai. Sekarang waktunya istirahat! ☕")
-            else:
-                st.success("Istirahat selesai! Yuk, kembali fokus belajar! 📚")
-            
-            st.session_state.timer_running = False
+                
+                // Bunyi otomatis 3 kali
+                playBell();
+                setTimeout(playBell, 1000);
+                setTimeout(playBell, 2000);
+            } catch(e) {
+                console.log('Audio error:', e);
+            }
+        })();
+        </script>
+        """
+        
+        # Inject JS - LANGSUNG BUNYI OTOMATIS
+        st.components.v1.html(bell_js, height=0)
+        
+        # Pesan sukses (TANPA suruhan klik)
+        if "Belajar" in mode:
+            st.session_state.pomodoro_counter += 1
+            st.success("🎉 Sesi belajar selesai! Istirahat dulu ya! ☕")
+            st.balloons()
+        else:
+            st.success("☕ Istirahat selesai! Yuk lanjut belajar! 📚")
 
-# ===== TAB 2: MUSIK FOKUS (HANYA 1 VIDEO YANG PASTI AVAILABLE) =====
+# ===== TAB 2: MUSIK PENGIRING (TANPA YOUTUBE) =====
 with tab2:
-    st.subheader("🎵 Musik Fokus Lo-Fi")
-    st.write("Putar musik ini sambil belajar untuk meningkatkan fokus!")
+    st.subheader("🎵 Pilih Musik Pengiring")
+    st.write("Putar musik di bawah ini sambil belajar!")
     
-    # HANYA 1 VIDEO YANG PASTI AVAILABLE (Lofi Girl)
-    st.video("https://www.youtube.com/watch?v=jfKfPfyJRdk")
+    # Pilihan musik (semua dari sumber bebas royalti)
+    pilihan_musik = st.selectbox(
+        "Pilih suasana musik:",
+        [
+            "🌸 Santai & Tenang",
+            "🎹 Piano Klasik",
+            "🌙 Malam yang Damai",
+            "🌿 Suasana Hutan"
+        ]
+    )
     
-    st.caption("✨ *Tips: Putar musiknya, lalu pindah ke tab 'Timer Pomodoro' untuk mulai belajar. Musik akan tetap menyala!*")
+    # URL audio bebas royalti
+    audio_urls = {
+        "🌸 Santai & Tenang": "https://www.soundjay.com/music/relaxing/relaxing-1-18396.mp3",
+        "🎹 Piano Klasik": "https://www.soundjay.com/music/relaxing/relaxing-4-18399.mp3",
+        "🌙 Malam yang Damai": "https://www.soundjay.com/music/relaxing/relaxing-5-18400.mp3",
+        "🌿 Suasana Hutan": "https://www.soundjay.com/music/relaxing/relaxing-6-18401.mp3"
+    }
     
-    # Tambahan audio alternatif (buat jaga-jaga kalo video YouTube error)
+    # Tampilkan player audio
+    st.audio(audio_urls[pilihan_musik], format="audio/mp3")
+    
+    st.caption("💡 *Tips: Putar musiknya, lalu pindah ke tab Timer. Musik akan tetap menyala!*")
+    
+    # Tambahan info
     st.divider()
-    st.write("🎧 **Atau putar musik offline di bawah ini:**")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.audio("https://www.soundjay.com/music/relaxing/relaxing-1-18396.mp3", format="audio/mp3")
-        st.caption("Musik Santai")
-    with col2:
-        st.audio("https://www.soundjay.com/music/relaxing/relaxing-4-18399.mp3", format="audio/mp3")
-        st.caption("Musik Fokus")
+    st.write("🎧 **Kenapa musik ini?**")
+    st.info("Musik ini bebas royalti dan dirancang khusus untuk membantu fokus saat belajar!")
 
 # ===== TAB 3: TO-DO LIST =====
 with tab3:
