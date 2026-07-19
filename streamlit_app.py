@@ -5,14 +5,6 @@ import random
 # --- KONFIGURASI ---
 st.set_page_config(page_title="Pink Pomodoro", page_icon="🌸", layout="centered")
 
-# --- AUTO PLAY BACKSOUND (Optional) ---
-auto_music = """
-<audio autoplay loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-</audio>
-"""
-st.markdown(auto_music, unsafe_allow_html=True)
-
 # --- STYLE PINK ---
 st.markdown("""
     <style>
@@ -31,7 +23,7 @@ if 'pomodoro_counter' not in st.session_state:
 
 # --- JUDUL ---
 st.title("🌸 Pink Pomodoro Timer 🌸")
-st.write("Kelola waktu belajarmu dengan musik pengiring!")
+st.write("Kelola waktu belajarmu dengan musik Synthwave!")
 
 quotes = [
     "Semangat belajarnya, Nadia! ✨",
@@ -45,7 +37,7 @@ durasi_belajar = st.sidebar.number_input("Waktu Belajar (Menit):", min_value=1, 
 durasi_istirahat = st.sidebar.number_input("Waktu Istirahat (Menit):", min_value=1, max_value=60, value=5)
 
 # --- TABS ---
-tab1, tab2, tab3 = st.tabs(["⏱️ Timer", "🎵 Backsound", "📝 To-Do"])
+tab1, tab2, tab3 = st.tabs(["⏱️ Timer", "🎵 Synthwave", "📝 To-Do"])
 
 # ===== TAB 1: TIMER =====
 with tab1:
@@ -111,25 +103,18 @@ with tab1:
         else:
             st.success("☕ Istirahat selesai! Lanjut belajar! 📚")
 
-# ===== TAB 2: BACKSOUND =====
+# ===== TAB 2: SYNTHWAVE RADIO =====
 with tab2:
-    st.subheader("🎵 Backsound Belajar")
+    st.subheader("🎵 Backsound - Synthwave Radio")
+    st.write("Musik Synthwave 24/7 dari Lofi Girl!")
     
-    # Pilihan musik
-    pilihan = st.selectbox(
-        "Pilih musik:",
-        ["🌸 Lofi Santai", "🎹 Piano Klasik", "🌙 Musik Tidur", "🎧 Instrumental"]
-    )
+    # Tampilin cover art biar aesthetic
+    st.image("https://i.ytimg.com/vi/4xDzrJKXOOY/maxresdefault.jpg", use_column_width=True)
     
-    youtube_links = {
-        "🌸 Lofi Santai": "https://www.youtube.com/watch?v=jfKfPfyJRdk",
-        "🎹 Piano Klasik": "https://www.youtube.com/watch?v=WZrqhllir4Y",
-        "🌙 Musik Tidur": "https://www.youtube.com/watch?v=4xDzrJKXOOY",
-        "🎧 Instrumental": "https://www.youtube.com/watch?v=2gteF6s0uP4"
-    }
+    # Video player
+    st.video("https://www.youtube.com/watch?v=4xDzrJKXOOY")
     
-    st.video(youtube_links[pilihan])
-    st.caption("💡 Putar musiknya, lalu ke tab Timer!")
+    st.success("💡 Klik PLAY di video, lalu pindah ke tab Timer. Musik tetap nyala!")
 
 # ===== TAB 3: TO-DO =====
 with tab3:
