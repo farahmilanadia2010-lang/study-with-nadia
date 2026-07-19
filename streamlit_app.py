@@ -5,7 +5,7 @@ import random
 # --- KONFIGURASI HALAMAN ---
 st.set_page_config(page_title="Pink Pomodoro", page_icon="🌸", layout="centered")
 
-# --- STYLE AESTHETIC PINK KEMBALI KACAU ---
+# --- STYLE AESTHETIC PINK ---
 st.markdown("""
     <style>
     .stApp {
@@ -22,6 +22,7 @@ st.markdown("""
         border: 2px solid #FF69B4;
         font-weight: bold;
         width: 100%;
+        padding: 10px;
     }
     .stButton>button:hover {
         background-color: #FF69B4;
@@ -40,18 +41,12 @@ st.markdown("""
         background-color: #FF69B4 !important;
         border-radius: 8px;
     }
+    iframe {
+        border-radius: 15px;
+        border: 3px solid #FFB6C1;
+    }
     </style>
 """, unsafe_allow_html=True)
-
-# --- FUNGSI ALARM LONCENG ---
-def play_bell():
-    js_bell = """
-    <script>
-    var audio = new Audio('https://upload.wikimedia.org/wikipedia/commons/5/5c/Analog-watch-alarm_rolling.ogg');
-    audio.play();
-    </script>
-    """
-    st.components.v1.html(js_bell, height=0, width=0)
 
 # --- INISIALISASI ---
 if 'todo_list' not in st.session_state:
@@ -61,7 +56,7 @@ if 'pomodoro_counter' not in st.session_state:
 
 # --- JUDUL UTAMA ---
 st.title("🌸 Pink Pomodoro Timer 🌸")
-st.write("Kelola waktu belajarmu dengan lebih estetik dan produktif!")
+st.write("Kelola waktu belajarmu dengan iringan musik YouTube Lofi Estetik!")
 
 quotes = [
     "Semangat belajarnya, Nadia! Langkah kecil hari ini adalah kesuksesan masa depan. ✨",
@@ -76,7 +71,7 @@ durasi_belajar = st.sidebar.number_input("Waktu Belajar (Menit):", min_value=1, 
 durasi_istirahat = st.sidebar.number_input("Waktu Istirahat (Menit):", min_value=1, max_value=60, value=5)
 
 # --- TABS UTAMA ---
-tab1, tab2, tab3 = st.tabs(["⏱️ Timer Pomodoro", "🎵 10 Musik Latar", "📝 Tugas Hari Ini"])
+tab1, tab2, tab3 = st.tabs(["⏱️ Timer Pomodoro", "🎵 Musik YouTube", "📝 Tugas Hari Ini"])
 
 # TAB 1: TIMER
 with tab1:
@@ -101,7 +96,10 @@ with tab1:
             total_detik -= 1
             
         tempat_timer.header("🎉 Waktu Habis!")
-        play_bell()
+        
+        # SOLUSI PASTI BERBUNYI: Widget audio resmi yang muncul di akhir sesi
+        st.error("⏰ WAKTU HABIS! Silakan klik tombol PLAY di bawah untuk mematikan alarm/mendengar lonceng:")
+        st.audio("https://upload.wikimedia.org/wikipedia/commons/5/5c/Analog-watch-alarm_rolling.ogg")
         
         if "Belajar" in mode:
             st.session_state.pomodoro_counter += 1
@@ -109,43 +107,42 @@ with tab1:
         else:
             st.success("Istirahat selesai! Yuk, kembali fokus belajar! 📚")
 
-# TAB 2: 10 PILIHAN MUSIK YANG SUDAH DIPERBAIKI (LINK STABIL WIKIMEDIA)
+# TAB 2: MUSIK DARI YOUTUBE
 with tab2:
-    st.subheader("🎵 10 Pilihan Musik Latar & Alam")
-    pilihan_musik = st.selectbox(
-        "Pilih Suara Latar:", 
+    st.subheader("🎵 Pilihan Musik Lo-Fi YouTube")
+    st.write("Pilih tema musik kesukaanmu, lalu klik tombol **Play** pada pemutar di bawah:")
+    
+    pilihan_yt = st.selectbox(
+        "Pilih Playlist / Video YouTube:",
         [
-            "Tanpa Musik", 
-            "1. Cozy Cafe Jazz Piano", 
-            "2. Classical Focus Study (Chopin)", 
-            "3. Relaxing Nature Ambient", 
-            "4. Soft Rain Sound (Suara Hujan)", 
-            "5. Forest Birds (Suara Burung Hutan)", 
-            "6. Ocean Waves (Ombak Laut)", 
-            "7. Deep Meditation Alpha Waves", 
-            "8. Peaceful Temple Meditation", 
-            "9. Cinematic Chill Ambient", 
-            "10. Classic Music Focus"
+            "1. Lofi Girl - Chill Lofi Study Beats",
+            "2. Pink Aesthetic Lofi Beats",
+            "3. Studio Ghibli Piano Comforting Music",
+            "4. Coffee Shop Piano Jazz Loop",
+            "5. Cute & Relaxing Animal Crossing Music"
         ]
     )
     
-    # Semua link di bawah ini diganti ke format .mp3/.ogg yang lolos blokir browser
-    audio_urls = {
-        "1. Cozy Cafe Jazz Piano": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Jesper_Ankarfeldt_-_04_-_Coffee_Shop.mp3",
-        "2. Classical Focus Study (Chopin)": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Frederic_Chopin_-_Nocturne_Op_9_No_2_E_flat_Major.mp3",
-        "3. Relaxing Nature Ambient": "https://upload.wikimedia.org/wikipedia/commons/8/87/Ambient_nature_soundscape.ogg",
-        "4. Soft Rain Sound (Suara Hujan)": "https://upload.wikimedia.org/wikipedia/commons/0/05/Rain_on_roof_1.ogg",
-        "5. Forest Birds (Suara Burung Hutan)": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Forest_birds_singing.ogg",
-        "6. Ocean Waves (Ombak Laut)": "https://upload.wikimedia.org/wikipedia/commons/1/18/Ocean_waves_at_the_beach.ogg",
-        "7. Deep Meditation Alpha Waves": "https://upload.wikimedia.org/wikipedia/commons/0/08/Binaural_Alpha_Waves_8Hz.ogg",
-        "8. Peaceful Temple Meditation": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Meditation_Bell_Sound.ogg",
-        "9. Cinematic Chill Ambient": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Epic_Cinematic_Ambient.mp3",
-        "10. Classic Music Focus": "https://upload.wikimedia.org/wikipedia/commons/2/21/Mozart_-_Symphony_No._40_in_G_minor%2C_K._550_-_I._Molto_allegro.mp3"
+    youtube_ids = {
+        "1. Lofi Girl - Chill Lofi Study Beats": "jfKfPfyJRdk",
+        "2. Pink Aesthetic Lofi Beats": "5wRWniH7avc",
+        "3. Studio Ghibli Piano Comforting Music": "WZrqhllir4Y",
+        "4. Coffee Shop Piano Jazz Loop": "2gteF6s0uP4",
+        "5. Cute & Relaxing Animal Crossing Music": "f4CclhUenP0"
     }
     
-    if pilihan_musik != "Tanpa Musik":
-        st.audio(audio_urls[pilihan_musik])
-        st.caption("✨ *Tips: Klik tombol play di atas, musik akan terus berputar walaupun kamu pindah ke tab Timer!*")
+    video_id = youtube_ids[pilihan_yt]
+    
+    embed_code = f"""
+    <iframe width="100%" height="315" 
+    src="https://www.youtube.com/embed/{video_id}" 
+    title="YouTube video player" frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen></iframe>
+    """
+    
+    st.components.v1.html(embed_code, height=330)
+    st.caption("✨ *Tips: Putar musiknya di sini, lalu kamu bisa pindah ke tab 'Timer Pomodoro' untuk mulai belajar tanpa menghentikan lagunya!*")
 
 # TAB 3: TO-DO LIST
 with tab3:
